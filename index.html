@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>VideoChat</title>
+  <!---- socket ------>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client/subclass.js"></script>
+  <script src="/client/WebRtc.js"></script>
+  <script src="/client/WebRtcSocket.js"></script>
+</head>
+<body>
+  <div id="initArea" style="display:'';">
+    <h1>名前入力</h1>
+    <input type="text" id="name_input" style="width:200px;" />
+    <h1>部屋選択</h1>
+    <select id="room_input" >
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <button onclick="selectRoom();">選択</button>
+  </div>
+
+  <div id="roomArea" style="display:none;">
+    <div id="videoArea" style="position: relative; ">
+       <div id="videoControllArea" style="display:none;">
+          <button type="button" onclick="startVideo();">Start video</button>
+          <button type="button" onclick="stopVideo();">Stop video</button>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <!-- <button type="button" onclick="connect();">Connect</button> -->
+          <button type="button" onclick="socketController.sendCall();">Connect</button>
+          <button type="button" onclick="socketController.hangUp();">Hang Up</button>
+       </div>
+       <video id="local-video" autoplay style="width: 240px; height: 180px; border: 1px solid black;"></video>
+    </div>
+    <div id="chatArea">
+      <button onclick="publishMessage();">コメント</button>
+      <button onclick="leaveRoom();">退席</button><br />
+      <textarea id="msg_input" cols=40 rows = 4></textarea>
+      <div id="msg"></div>
+    </div>
+  </div>
+
+  <script>
+  var localVideo = document.getElementById('local-video');
+  //var remoteVideo = document.getElementById('remote-video');
+  var localStream = null;
+  var mediaConstraints = {'mandatory': {'OfferToReceiveAudio':false, 'OfferToReceiveVideo':true }};
+
+  // ---- multi people video & audio ----
+  var videoElementsInUse = {};
+
+  function selectRoom(){
+    socketController.sendEnter(getRoom(), getUserName());
+    startVideo();
+    document.getElementById("initArea").style.display = "none";
+    document.getElementById("roomArea").style.display = "";
+    document.getElementById("msg").html = "";
+  }
+
+  function leaveRoom(){
+    document.getElementById("initArea").style.display = "";
+    document.getElementById("roomArea").style.display = "none";
+    socketController.leaveRoom();
+  }
+
+  //コメント書き込みのリクエストをnodeに投げる
+  function publishMessage(){
+    var textInput = document.getElementById('msg_input');
+    socketController.publishMessage(getRoom(), textInput.value);
+    textInput.value='';
+  }
+
+  function getRoom(){
+    return 'room' + document.getElementById('room_input').value;
+  }
+
+  function getUserName(){
+    return document.getElementById('name_input').value;
+  }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "videochat",
+  "version": "1.0.0",
+  "description": "Try WebRTC with node.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "test"
+  },
+  "keywords": [
+    "WebRTC"
+  ],
+  "author": "teruuu",
+  "license": "ISC",
+  "devDependencies": {
+    "node-inspector": "^0.12.10"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "https": "^1.0.0",
+    "socket.io": "^1.7.4"
+  }
+}
